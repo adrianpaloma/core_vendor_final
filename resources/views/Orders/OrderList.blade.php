@@ -138,7 +138,7 @@
                                                 <td>{{ number_format($order->amount_total / 100, 2) }}</td>
                                                 <td>{{ $order->metadata->order_status }}</td>
                                                 <td>
-                                                    <a href="#" class="btn btn-outline-success btn-sm">Approve</a>
+                                                    {{-- <a href="#" class="btn btn-outline-success btn-sm">Approve</a> --}}
                                                     {{-- <a href="#" class="btn btn-outline-danger btn-sm">Reject</a> --}}
                                                     <a href="{{ route('OrderDetails', $order->id) }}" class="btn btn-outline-primary btn-sm">View</a>
                                                 </td>

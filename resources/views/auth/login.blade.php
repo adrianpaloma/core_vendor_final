@@ -9,7 +9,7 @@
     <style>
         /* Background with gradient animation */
         body {
-            background: linear-gradient(-45deg, #3a1c71, #d76d77, #ffaf7b);
+            background: linear-gradient(-45deg, #663C1F, #895129, #E08543);
             background-size: 400% 400%;
             animation: gradientBG 10s ease infinite;
             height: 100vh;
@@ -68,13 +68,13 @@
             padding: 12px;
             border-radius: 10px;
             border: none;
-            background: linear-gradient(90deg, #ff758c, #ff7eb3);
+            background: linear-gradient(90deg, #895129, #E08543);
             color: white;
             transition: 0.3s;
         }
 
         .login-btn:hover {
-            background: linear-gradient(90deg, #ff7eb3, #ff758c);
+            background: linear-gradient(90deg, #895129, #E08543);
             transform: translateY(-2px);
         }
 

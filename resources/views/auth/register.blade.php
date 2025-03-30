@@ -8,7 +8,7 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         body {
-            background: linear-gradient(-45deg, #3a1c71, #d76d77, #ffaf7b);
+            background: linear-gradient(-45deg, #663C1F, #895129, #E08543);
             background-size: 400% 400%;
             animation: gradientBG 10s ease infinite;
             height: 100vh;
@@ -47,7 +47,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            background: linear-gradient(135deg, #895129, #E08543);
             color: white;
             border: none;
             padding: 12px 20px;

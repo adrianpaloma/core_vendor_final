@@ -22,10 +22,10 @@
         }
         .feature-icon {
             font-size: 3rem;
-            color: #007bff;
+            color: #E08543;
         }
         .cta-section {
-            background: #007bff;
+            background: #E08543;
             color: white;
             padding: 50px 0;
             text-align: center;
@@ -35,7 +35,7 @@
             padding: 12px 30px;
         }
         .footer {
-            background: #343a40;
+            background: #895129;
             color: white;
             padding: 20px 0;
             text-align: center;
@@ -47,7 +47,7 @@
             transition: 0.3s;
         }
         .footer a:hover {
-            color: #007bff;
+            color: #E08543;
         }
     </style>
 </head>

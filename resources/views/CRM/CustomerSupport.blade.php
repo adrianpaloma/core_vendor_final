@@ -8,121 +8,170 @@
     <link rel="stylesheet" href="home/assets/libs/css/style.css">
     <link rel="stylesheet" href="home/assets/vendor/font-awesome/fontawesome.css">
     <link rel="stylesheet" href="home/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
-    <title>Customer Support</title>
+    <title>CRM</title>
     <style>
-        .support-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        body {
+            background-color: #f8f9fa;
         }
+
+        /* Card Styling with Borders */
+        .crm-card {
+            border: 2px solid #dee2e6; /* Added border */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .crm-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            border-color: #007bff; /* Highlight border on hover */
+        }
+
+        /* Icon Circle */
         .icon-circle {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
+            color: white;
+            margin-right: 15px;
         }
-        .icon-blue { background-color: #007bff; color: white; }
-        .icon-green { background-color: #28a745; color: white; }
-        .icon-orange { background-color: #fd7e14; color: white; }
-        .icon-red { background-color: #dc3545; color: white; }
+
+        .icon-blue {
+            background-color: #007bff;
+        }
+
+        /* Button Styling */
+        .btn-reply {
+            background-color: #28a745;
+            color: white;
+            border-radius: 20px;
+            transition: background-color 0.2s ease;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #28a745;
+        }
+
+        .btn-reply:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-send {
+            background-color: #007bff;
+            color: white;
+            border-radius: 20px;
+            transition: background-color 0.2s ease;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #007bff;
+        }
+
+        .btn-send:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        /* Border for textarea */
+        textarea.form-control {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea.form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-main-wrapper">
         @include('home.header')
         @include('home.sidenav')
+
         <div class="dashboard-wrapper">
             <div class="container-fluid dashboard-content">
                 <div class="row mt-4">
                     <div class="col-md-12">
-                        <div class="card support-card p-4">
-                            <h2 class="mb-4 text-center">Customer Support</h2>
+                        <h2 class="mb-4 text-center">Client Messages</h2>
 
-                            <div class="row">
-                                <!-- Ticket Submission -->
-                                <div class="col-md-6">
-                                    <div class="card mb-4 support-card">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center mb-3">
-                                                <div class="icon-circle icon-blue me-3">
-                                                    <i class="fas fa-ticket-alt"></i>
-                                                </div>
-                                                <h5 class="mb-0">Submit a Support Ticket</h5>
-                                            </div>
-                                            <form>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Subject</label>
-                                                    <input type="text" class="form-control" placeholder="Enter issue subject">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Description</label>
-                                                    <textarea class="form-control" rows="4" placeholder="Describe your issue"></textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary w-100">Submit Ticket</button>
-                                            </form>
-                                        </div>
+                        <!-- Example of a single client message -->
+                        <div class="card crm-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle icon-blue">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">John Doe</h5>
+                                        <small class="text-muted">john.doe@example.com</small>
                                     </div>
                                 </div>
+                                <p class="mb-3">
+                                    <strong>Message:</strong>  
+                                    <span class="d-block mt-1">
+                                        I need help with my recent order. It hasn’t arrived yet.
+                                    </span>
+                                </p>
 
-                                <!-- Live Chat -->
-                                <div class="col-md-6">
-                                    <div class="card mb-4 support-card">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center mb-3">
-                                                <div class="icon-circle icon-green me-3">
-                                                    <i class="fas fa-comments"></i>
-                                                </div>
-                                                <h5 class="mb-0">Live Chat Support</h5>
-                                            </div>
-                                            <p>Chat with our support team instantly.</p>
-                                            <button class="btn btn-success w-100">Start Chat</button>
-                                        </div>
+                                <!-- Reply Section -->
+                                <form>
+                                    <div class="mb-3">
+                                        <textarea class="form-control" rows="3" placeholder="Type your reply here..." required></textarea>
                                     </div>
-                                </div>
+                                    <button type="submit" class="btn btn-reply">Send Reply</button>
+                                </form>
                             </div>
+                        </div>
+                        <!-- End of Single Message -->
 
-                            <!-- FAQ Section -->
-                            <div class="card support-card">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="icon-circle icon-orange me-3">
-                                            <i class="fas fa-question-circle"></i>
-                                        </div>
-                                        <h5 class="mb-0">Frequently Asked Questions</h5>
+                        <!-- Repeat this block for more messages -->
+                        <div class="card crm-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle icon-blue">
+                                        <i class="fas fa-user"></i>
                                     </div>
-                                    <div class="accordion" id="faqAccordion">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">How do I reset my password?</button>
-                                            </h2>
-                                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                                <div class="accordion-body">Go to settings and select 'Reset Password'.</div>
-                                            </div>
-                                        </div>
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">How do I contact support?</button>
-                                            </h2>
-                                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                                <div class="accordion-body">You can submit a ticket or use live chat.</div>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <h5 class="mb-0">Jane Smith</h5>
+                                        <small class="text-muted">jane.smith@example.com</small>
                                     </div>
                                 </div>
-                            </div> <!-- End FAQ Section -->
-                        </div> <!-- End Main Support Card -->
+                                <p class="mb-3">
+                                    <strong>Message:</strong>  
+                                    <span class="d-block mt-1">
+                                        How do I change my account details?
+                                    </span>
+                                </p>
+
+                                <!-- Reply Section -->
+                                <form>
+                                    <div class="mb-3">
+                                        <textarea class="form-control" rows="3" placeholder="Type your reply here..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-reply">Send Reply</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End of Single Message -->
+
                     </div>
                 </div>
             </div>
         </div>
+
         @include('home.footer')
     </div>
 
     <script src="home/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
     <script src="home/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="home/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-    <script src="home/assets/libs/js/main-js.js"></script>
 </body>
 </html>

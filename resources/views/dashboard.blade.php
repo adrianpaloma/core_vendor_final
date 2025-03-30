@@ -5,7 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="home/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="home/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
     <link rel="stylesheet" href="home/assets/libs/css/style.css">
+    <link rel="stylesheet" href="home/assets/vendor/font-awesome/fontawesome.css">
+    <link rel="stylesheet" href="home/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css">
     <title>Vendor Dashboard</title>
     <style>
@@ -182,6 +185,8 @@
 
     <script src="home/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
     <script src="home/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="home/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+    <script src="home/assets/libs/js/main-js.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var ctx = document.getElementById('sales-analytics-chart').getContext('2d');
