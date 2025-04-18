@@ -57,6 +57,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{route('AddNewProducts')}}">Add New Product</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{route('ProductReview')}}">Product Review</a>
+                                </li>
                             </ul>
                         </div>
                     </li>

@@ -103,6 +103,9 @@ Route::get("Refunds", function () {
 Route::get("CustomerSupport", function () {
     return view("CRM.CustomerSupport"); 
 })->name('CustomerSupport');
+Route::get("ProductReview", function () {
+    return view("Products.ProductReview"); 
+})->name('ProductReview');
 
 Route::get('/stripe_sync', function () {
     Stripe::setApiKey(env('STRIPE_SECRET'));
