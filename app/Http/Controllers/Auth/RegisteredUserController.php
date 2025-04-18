@@ -69,6 +69,9 @@ class RegisteredUserController extends Controller
                 'metadata' => [
                     'address' => $user->location,
                     'email' => $user->email,
+                    'stripe_account_id' => $user->stripe_account_id,
+                    'store_name' => $user->store_name,
+                    'location' => $user->location
                 ],
                 'capabilities' => [
                     'transfers' => ['requested' => true],

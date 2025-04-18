@@ -104,5 +104,11 @@ Route::get("CustomerSupport", function () {
     return view("CRM.CustomerSupport"); 
 })->name('CustomerSupport');
 
+Route::get('/stripe_sync', function () {
+    Stripe::setApiKey(env('STRIPE_SECRET'));
 
+    $a  = \Stripe\Product::all(['type' => 'good']);
+
+    return json_encode($a);
+});
 

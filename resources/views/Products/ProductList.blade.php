@@ -57,7 +57,6 @@
     <div class="dashboard-wrapper">
         <div class="dashboard-ecommerce">
             <div class="container-fluid dashboard-content">
-                <!-- Card -->
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0" style="color: white;">Product List</h5>
@@ -72,6 +71,8 @@
                                         <th>Price</th>
                                         <th>Quantity</th>
                                         <th>Status</th>
+                                        <th>Color(s)</th>
+                                        <th>Size(s)</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -85,46 +86,72 @@
                                                     break;
                                                 }
                                             }
+                                
+                                            $variants = json_decode($product->metadata->variants ?? '[]');
+                                            $colors = [];
+                                            $sizes = [];
+                                
+                                            foreach ($variants as $variant) {
+                                                if (isset($variant->color)) {
+                                                    $colors[] = $variant->color;
+                                                }
+                                                if (isset($variant->size)) {
+                                                    $sizes[] = $variant->size;
+                                                }
+                                            }
+                                            $uniqueColors = array_unique($colors);
+                                            $uniqueSizes = array_unique($sizes);
                                         @endphp
                                         <tr>
                                             <td>
-                                                <img src="{{ $product->images[0] ?? asset('home/assets/images/avatar.png') }}" 
-                                                     alt="Product Image" 
-                                                     class="img-fluid rounded" 
+                                                <img src="{{ $product->images[0] ?? asset('home/assets/images/avatar.png') }}"
+                                                     alt="Product Image"
+                                                     class="img-fluid rounded"
                                                      style="width: 80px; height: 80px; object-fit: cover;">
                                             </td>
                                             <td>{{ $product->name }}</td>
                                             @if ($price != null)
                                                 <td>{{ number_format($price->unit_amount / 100, 2) }} {{ strtoupper($price->currency) }}</td>
+                                            @else
+                                                <td>N/A</td>
                                             @endif
-                                            <td>{{ $product->metadata->stock }}</td>
-                                            <td>{{ $product->metadata->status }}</td>
+                                            <td>{{ $product->metadata->stock ?? 'N/A' }}</td>
+                                            <td>{{ $product->metadata->status ?? 'N/A' }}</td>
                                             <td>
-                                                <!-- Edit Button (Opens Modal) -->
+                                                @if (!empty($uniqueColors))
+                                                    {{ implode(', ', $uniqueColors) }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (!empty($uniqueSizes))
+                                                    {{ implode(', ', $uniqueSizes) }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td>
                                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editProductModal{{ $product->id }}">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </button>
-                                        
-                                                <!-- Delete Button (Confirmation) -->
+                                
                                                 <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteProductModal{{ $product->id }}">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </td>
                                         </tr>
-                                        
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <!-- End of Card -->
-            </div>
+                </div>
         </div>
     </div>
 </div>
 
-<!-- Edit Product Modal -->
 @foreach ($products as $product)
 <div class="modal fade" id="editProductModal{{ $product->id }}" tabindex="-1">
     <div class="modal-dialog">
@@ -137,7 +164,7 @@
                 <form action="{{ route('product_update', $product->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    
+
                     <div class="mb-3">
                         <label>Product Name</label>
                         <input type="text" name="name" value="{{ $product->name }}" class="form-control">
@@ -147,18 +174,20 @@
                         <label>Description</label>
                         <input type="text" name="desc" value="{{ $product->description }}" class="form-control">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label>Stock</label>
-                        <input type="text" name="stock" value="{{ $product->metadata->stock }}" class="form-control">
+                        <input type="text" name="stock" value="{{ $product->metadata->stock ?? '' }}" class="form-control">
                     </div>
 
                     <div class="mb-3">
                         <label>Category</label>
                         <select name="category" class="form-control">
-                            <option value="coffee" {{ $product->metadata->category == 'coffee' ? 'selected' : ''  }}>Coffee</option>
-                            <option value="tea" {{ $product->metadata->category == 'tea' ? 'selected' : ''  }}>Tea</option>
-                            <option value="equipment" {{ $product->metadata->category == 'equipment' ? 'selected' : ''  }}>Equipment</option>
+                            <option value="Technology" {{ (isset($product->metadata->category) && $product->metadata->category == 'Technology') ? 'selected' : '' }}>Technology</option>
+                            <option value="Fashion" {{ (isset($product->metadata->category) && $product->metadata->category == 'Fashion') ? 'selected' : '' }}>Fashion</option>
+                            <option value="Beauty & Personal Care" {{ (isset($product->metadata->category) && $product->metadata->category == 'Beauty & Personal Care') ? 'selected' : '' }}>Beauty & Personal Care</option>
+                            <option value="Home & Furniture" {{ (isset($product->metadata->category) && $product->metadata->category == 'Home & Furniture') ? 'selected' : '' }}>Home & Furniture</option>
+                            <option value="Others" {{ (isset($product->metadata->category) && $product->metadata->category == 'Others') ? 'selected' : '' }}>Others</option>
                         </select>
                     </div>
 
@@ -187,7 +216,7 @@
                 <form action="{{ route('product_delete', $product->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    
+
                     <button type="submit" class="btn btn-danger" id="confirmDeleteProduct">Delete</button>
                 </form>
             </div>

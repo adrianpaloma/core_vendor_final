@@ -39,6 +39,19 @@
         .form-group .input-group {
             width: 100%;
         }
+        .variant-group {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .variant-group .input-group {
+            margin-bottom: 5px;
+        }
+        .remove-variant {
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -56,14 +69,13 @@
                         {{ session('success') }} {{ session('warning') }}
                     </div>
                 @endif
-                <!-- Start Add New Product Section -->
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0" style="color: white;">Add New Products</h5>
                             </div>
-                            
+
                             <div class="card-body">
                                 <form action="{{ route('product_store') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
@@ -86,19 +98,45 @@
                                             <option value="Others">Others</option>
                                         </select>
                                     </div>
+
                                     <div class="form-group">
-                                        <label for="price">Price ($)</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">$</span>
                                             </div>
-                                            <input type="text" class="form-control" id="price" name="price" placeholder="Enter product price" required>
+                                            <input type="text" class="form-control" name="price" placeholder="Price" required>
                                         </div>
                                     </div>
+
                                     <div class="form-group">
-                                        <label for="stock">Stock Quantity</label>
-                                        <input type="number" class="form-control" id="stock" name="stock" placeholder="Enter stock quantity" required>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Stock</span>
+                                            </div>
+                                            <input type="number" class="form-control" name="stock" placeholder="Stock Quantity" required>
+                                        </div>
                                     </div>
+
+                                    <div id="variants-container">
+                                        <label>Product Variations (Color & Size)</label>
+                                        <div class="variant-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Color</span>
+                                                </div>
+                                                <input type="text" class="form-control" name="variants[0][color]" placeholder="Enter color">
+                                            </div>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Size</span>
+                                                </div>
+                                                <input type="text" class="form-control" name="variants[0][size]" placeholder="Enter size">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" id="add-variant" class="btn btn-info btn-sm mb-3">Add Another Variation</button>
+
                                     <div class="form-group">
                                         <label for="productImage">Upload Image</label>
                                         <input type="file" class="form-control-file" id="productImage" name="productImage" accept="image/*" onchange="previewImage(event)">
@@ -115,9 +153,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- End Add New Product Section -->
-
-            </div>
+                </div>
         </div>
     </div>
 
@@ -144,6 +180,37 @@
             reader.readAsDataURL(file);
         }
     }
+
+    $(document).ready(function() {
+        let variantCount = 1;
+
+        $("#add-variant").click(function() {
+            const newVariant = `
+                <div class="variant-group" id="variant-${variantCount}">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Color</span>
+                        </div>
+                        <input type="text" class="form-control" name="variants[${variantCount}][color]" placeholder="Enter color" required>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Size</span>
+                        </div>
+                        <input type="text" class="form-control" name="variants[${variantCount}][size]" placeholder="Enter size">
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm remove-variant" data-variant-id="${variantCount}">Remove</button>
+                </div>
+            `;
+            $("#variants-container").append(newVariant);
+            variantCount++;
+        });
+
+        $("#variants-container").on('click', '.remove-variant', function() {
+            const variantId = $(this).data('variant-id');
+            $(`#variant-${variantId}`).remove();
+        });
+    });
 </script>
 
 </body>

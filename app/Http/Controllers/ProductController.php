@@ -40,6 +40,9 @@ class ProductController extends Controller
             'stock' => 'required|integer|min:0',
             'description' => 'required',
             'productImage' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'variants' => 'array',
+            'variants.*.color' => 'required_with:variants.*.size|nullable|string|max:255',
+            'variants.*.size' => 'required_with:variants.*.color|nullable|string|max:255',
         ]);
 
         try {
@@ -53,35 +56,38 @@ class ProductController extends Controller
                     'status' => 'Pending',
                     'category' => $request->category,
                     'stripe_account' => $user->stripe_account_id,
+                    'variants' => json_encode($request->variants), // Add variants to metadata
                 ],
             ]);
 
+            // Upload and attach image if exists
             if ($request->hasFile('productImage')) {
                 $file = $request->file('productImage');
-            
+
                 if (!$file->isValid()) {
                     return back()->with('error', 'Invalid file upload.');
                 }
-            
+
                 $filePath = $file->getPathname();
                 $fileMime = $file->getMimeType();
-            
+
                 $fileUpload = curl_file_create($filePath, $fileMime, $file->getClientOriginalName());
-            
+
                 $stripeFile = \Stripe\File::create([
                     'file' => $fileUpload,
                     'purpose' => 'product_image',
                 ]);
-            
+
                 $link = \Stripe\FileLink::create([
                     'file' => $stripeFile->id,
                 ]);
-            
+
                 \Stripe\Product::update($product->id, [
                     'images' => [$link->url],
                 ]);
-            }                    
+            }
 
+            // Create a Stripe price for the product
             \Stripe\Price::create([
                 'currency' => 'usd',
                 'unit_amount' => $request->price * 100,
@@ -93,10 +99,10 @@ class ProductController extends Controller
 
             return redirect()->back()->with('success', 'Product added successfully.');
         } catch (\Exception $e) {
-            echo $e->getMessage();
-            // return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
 
     public function update(Request $request, $product_id)
     {
