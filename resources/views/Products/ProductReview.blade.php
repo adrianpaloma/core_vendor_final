@@ -197,16 +197,22 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($reviews as $review)
+                                        @php
+                                            $filteredReviews = collect($reviews)->filter(function ($review) use ($products) {
+                                                return collect($products)->contains('id', $review->product_id);
+                                            });
+                                        @endphp
+                                        
+                                        @forelse ($filteredReviews as $review)
                                             @php
                                                 $product = collect($products)->firstWhere('id', $review->product_id);
-                                                $productName = $product ? $product->name : 'Unknown Product';
+                                                $productName = $product->name;
                                             @endphp
+                                        
                                             <tr>
                                                 <td>{{ $productName }}</td>
                                                 <td>
                                                     <div class="reviewer-cell">
-                                                        <img src="{{ asset('home/assets/images/avatar-placeholder.png') }}" alt="Reviewer Avatar" class="reviewer-avatar" width="40">
                                                         <div class="reviewer-info">
                                                             <span class="name">{{ $review->name ?? 'Anonymous' }}</span>
                                                             <span class="date">{{ \Carbon\Carbon::parse($review->created_at)->format('M d, Y') }}</span>
@@ -248,7 +254,11 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No reviews available.</td>
+                                            </tr>
+                                        @endforelse    
                                     </tbody>
                                 </table>
                             </div>
