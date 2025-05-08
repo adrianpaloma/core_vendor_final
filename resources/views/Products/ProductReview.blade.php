@@ -164,227 +164,100 @@
 </head>
 <body>
 
-<div class="dashboard-main-wrapper">
-    @include('home.header')
-    @include('home.sidenav')
-
-    <div class="dashboard-wrapper">
-        <div class="dashboard-ecommerce">
-            <div class="container-fluid dashboard-content py-3">
-
-                 <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="page-header">
-                            {{-- <h2 class="pageheader-title"></h2> --}}
-                            {{-- Optional Breadcrumbs --}}
+    <div class="dashboard-main-wrapper">
+        @include('home.header')
+        @include('home.sidenav')
+    
+        <div class="dashboard-wrapper">
+            <div class="dashboard-ecommerce">
+                <div class="container-fluid dashboard-content py-3">
+    
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="page-header">
+                                <h2 class="pageheader-title">Product Reviews</h2>
+                            </div>
                         </div>
                     </div>
+    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" style="color: white;">Product Reviews</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Reviewer</th>
+                                            <th>Rating</th>
+                                            <th>Review</th>
+                                            <th class="text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($reviews as $review)
+                                            @php
+                                                $product = collect($products)->firstWhere('id', $review->product_id);
+                                                $productName = $product ? $product->name : 'Unknown Product';
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $productName }}</td>
+                                                <td>
+                                                    <div class="reviewer-cell">
+                                                        <img src="{{ asset('home/assets/images/avatar-placeholder.png') }}" alt="Reviewer Avatar" class="reviewer-avatar" width="40">
+                                                        <div class="reviewer-info">
+                                                            <span class="name">{{ $review->name ?? 'Anonymous' }}</span>
+                                                            <span class="date">{{ \Carbon\Carbon::parse($review->created_at)->format('M d, Y') }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="review-rating">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <i class="{{ $i <= $review->rating ? 'fas' : 'far' }} fa-star"></i>
+                                                        @endfor
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="review-comment">
+                                                        <p>{{ $review->comment }}</p>
+                                                    </div>
+                                                </td>
+                                                <td class="text-right">
+                                                    <button class="btn btn-info btn-sm reply-button" data-review-id="{{ $review->id }}">
+                                                        <i class="fas fa-reply"></i> Reply
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="reply-section d-none" id="reply-section-{{ $review->id }}">
+                                                <td colspan="5">
+                                                    <div class="reply-form-container">
+                                                        <form method="POST" action="#">
+                                                            @csrf
+                                                            <div class="form-group mb-2">
+                                                                <label for="reply-text-{{ $review->id }}" class="sr-only">Your Reply</label>
+                                                                <textarea class="form-control" id="reply-text-{{ $review->id }}" name="reply_content" rows="3" placeholder="Enter your reply here..." required></textarea>
+                                                            </div>
+                                                            <div class="text-right">
+                                                                <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Submit Reply</button>
+                                                                <button type="button" class="btn btn-secondary btn-sm cancel-reply-button" data-review-id="{{ $review->id }}"><i class="fas fa-times"></i> Cancel</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+    
                 </div>
-
-                <!-- Single Card for All Reviews Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0" style="color: white;">Product Reviews</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Reviewer</th>
-                                        <th>Rating</th>
-                                        <th>Review</th>
-                                        <th class="text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{-- Loop through ALL reviews --}}
-                                    {{-- @foreach ($allReviews as $review) --}}
-
-                                    {{-- Example Review Row 1 --}}
-                                    {{-- Add 'pending-row' class if review is pending: <tr class="{{ $review->status == 'pending' ? 'pending-row' : '' }}"> --}}
-                                    <tr>
-                                        <td>
-                                            {{-- Link to product maybe? --}}
-                                            Wooden Coffee Table {{-- {{ $review->product->name }} --}}
-                                            {{-- Optional small image:
-                                            @if($review->product->image)
-                                                <img src="{{ asset($review->product->image) }}" alt="" width="30" class="ml-2">
-                                            @endif
-                                            --}}
-                                        </td>
-                                        <td>
-                                            <div class="reviewer-cell">
-                                                <img src="{{ asset('home/assets/images/avatar-2.jpg') }}" alt="Reviewer Avatar" class="reviewer-avatar">
-                                                <div class="reviewer-info">
-                                                    <span class="name">Jane Doe {{-- {{ $review->user->name ?? 'Anonymous' }} --}}</span>
-                                                    <span class="date">Jan 15, 2024 {{-- {{ $review->created_at->format('M d, Y') }} --}}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="review-rating">
-                                                {{-- @for ($i = 1; $i <= 5; $i++)
-                                                    <i class="{{ $i <= $review->rating ? 'fas' : 'far' }} fa-star"></i>
-                                                @endfor --}}
-                                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="review-comment">
-                                                {{-- @if($review->title) <h6>{{ $review->title }}</h6> @endif --}}
-                                                <h6>Excellent Quality!</h6>
-                                                <p>{{-- {{ $review->comment }} --}} This product exceeded my expectations. The material is top-notch...</p>
-                                            </div>
-                                        </td>
-                                        <td class="text-right">
-                                            <button class="btn btn-info btn-sm reply-button" data-review-id="301"> {{-- Unique ID --}}
-                                                <i class="fas fa-reply"></i> Reply
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {{-- Hidden Row for Reply Section for Review 1 --}}
-                                    <tr class="reply-section" id="reply-section-301">
-                                        <td colspan="5"> {{-- Span all columns --}}
-                                            {{-- Display Existing Reply (If applicable) --}}
-                                            {{-- @if($review->admin_reply) --}}
-                                            <div class="existing-reply">
-                                                <strong>Your Reply:</strong>
-                                                <p>Thank you for your feedback, Jane! We're glad you love the quality. {{-- {{ $review->admin_reply->content }} --}}</p>
-                                                <div class="reply-meta">Replied on: Jan 16, 2024 {{-- {{ $review->admin_reply->created_at->format('M d, Y') }} --}}</div>
-                                            </div>
-                                            {{-- @endif --}}
-
-                                            {{-- Hidden Reply Form specific to this review --}}
-                                            <div class="reply-form-container" id="reply-form-301">
-                                                {{-- Point form to your backend route --}}
-                                                {{-- <form method="POST" action="{{ route('admin.reviews.reply', $review->id) }}"> --}}
-                                                <form>
-                                                    {{-- @csrf --}}
-                                                    <div class="form-group mb-2">
-                                                        <label for="reply-text-301" class="sr-only">Your Reply</label>
-                                                        <textarea class="form-control" id="reply-text-301" name="reply_content" rows="3" placeholder="Enter your reply here..." required>{{-- {{ $review->admin_reply->content ?? '' }} --}}</textarea>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Submit Reply</button>
-                                                        <button type="button" class="btn btn-secondary btn-sm cancel-reply-button" data-review-id="301"><i class="fas fa-times"></i> Cancel</button>
-                                                    </div>
-                                                {{-- </form> --}}
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{-- End Example Review 1 --}}
-
-
-                                     {{-- Example Review Row 2 (Pending Style) --}}
-                                    <tr class="pending-row">
-                                        <td>Modern Desk Lamp</td>
-                                        <td>
-                                            <div class="reviewer-cell">
-                                                <img src="{{ asset('home/assets/images/avatar-3.jpg') }}" alt="Reviewer Avatar" class="reviewer-avatar">
-                                                <div class="reviewer-info">
-                                                    <span class="name">John Smith</span>
-                                                    <span class="date">Jan 14, 2024</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                         <td><div class="review-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></td>
-                                        <td>
-                                            <div class="review-comment">
-                                                <h6>Amazing Product!</h6>
-                                                <p>I'm really impressed. Arrived faster than expected...</p>
-                                            </div>
-                                        </td>
-                                        <td class="text-right">
-                                            <button class="btn btn-info btn-sm reply-button" data-review-id="302">
-                                                <i class="fas fa-reply"></i> Reply
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {{-- Hidden Row for Reply Section for Review 2 --}}
-                                    <tr class="reply-section" id="reply-section-302">
-                                         <td colspan="5">
-                                             {{-- No existing reply shown here --}}
-                                            <div class="reply-form-container" id="reply-form-302">
-                                                <form>
-                                                    <div class="form-group mb-2">
-                                                        <label for="reply-text-302" class="sr-only">Your Reply</label>
-                                                        <textarea class="form-control" id="reply-text-302" name="reply_content" rows="3" placeholder="Enter your reply here..." required></textarea>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Submit Reply</button>
-                                                        <button type="button" class="btn btn-secondary btn-sm cancel-reply-button" data-review-id="302"><i class="fas fa-times"></i> Cancel</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                  
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    
-                    </div>
-                </div> 
-              
-
-            </div> 
-        </div> 
-
-       
-
+            </div>
+        </div>
     </div>
-</div>
-
-<!-- JS Files -->
-<script src="home/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-<script src="home/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-{{-- <script src="home/assets/libs/js/main-js.js"></script> --}}
-
-<script>
-$(document).ready(function() {
-    // --- Reply Button Click Handler ---
-    $('.reply-button').on('click', function() {
-        var reviewId = $(this).data('review-id');
-        // Find the main review row
-        var $reviewRow = $(this).closest('tr');
-        // Find the *next* row which is the reply section
-        var $replySectionRow = $reviewRow.next('.reply-section');
-
-        // Ensure the ID matches (optional safety check)
-        if ($replySectionRow.attr('id') !== 'reply-section-' + reviewId) {
-            console.error("Could not find matching reply section row for review ID:", reviewId);
-            return;
-        }
-
-        // Hide all *other* reply section rows before showing the target one
-         $('.reply-section').not($replySectionRow).slideUp(200);
-
-        // Toggle the target reply section row
-        $replySectionRow.slideToggle(300, function() {
-            // Optional: Focus textarea when form is shown
-            if ($replySectionRow.is(':visible')) {
-                $replySectionRow.find('textarea').focus();
-            }
-        });
-    });
-
-    // --- Cancel Reply Button Click Handler ---
-    $('.cancel-reply-button').on('click', function() {
-        // Find the closest parent reply section row and hide it
-        $(this).closest('.reply-section').slideUp(300);
-         // Optional: Clear the textarea content on cancel
-         // $(this).closest('.reply-form-container').find('textarea').val('');
-    });
-
-   
-
-});
-</script>
-
 </body>
 </html>

@@ -1,17 +1,19 @@
 <?php
 
-use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\InventoryReportController;
 use Stripe\Stripe;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\SalesReportController;
-use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\InventoryReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -104,7 +106,37 @@ Route::get("CustomerSupport", function () {
     return view("CRM.CustomerSupport"); 
 })->name('CustomerSupport');
 Route::get("ProductReview", function () {
-    return view("Products.ProductReview"); 
+    Stripe::setApiKey(env('STRIPE_SECRET'));
+    $user = Auth::user();
+    $products = \Stripe\Product::all(
+        ['type' => 'good']
+    );
+    $products = array_filter($products->data, function($item) use ($user){
+        return $item->metadata->stripe_account == $user->stripe_account_id && $item->active == true;
+    });
+    
+    $reviews = collect();
+    $response  = Http::get('https://core2.fareastcafeshop.com/reviews');
+
+    if($response->successful()) {
+        $data = $response->json('data');
+
+        foreach ($data as $reviewData) {
+            Review::updateOrCreate(
+                ['id' => $reviewData['id']],
+                [
+                    'product_id' => $reviewData['product_id'],
+                    'name' => $reviewData['name'] ?? 'Unknown',
+                    'rating' => $reviewData['rating'],
+                    'comment' => $reviewData['comment'],
+                ]
+            );
+        }
+
+        $reviews = Review::all();
+    }
+
+    return view("Products.ProductReview", compact('reviews', 'products')); 
 })->name('ProductReview');
 
 Route::get('/stripe_sync', function () {
