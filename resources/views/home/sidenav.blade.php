@@ -125,7 +125,7 @@
                     </li>
 
                     <!-- CRM Section -->
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false"
                             data-target="#submenu-crm" aria-controls="submenu-crm">
                             <i class="fa fa-users" style="color:white"></i>
@@ -137,7 +137,7 @@
                                     <a class="nav-link" href="{{route('CustomerSupport')}}">Customer Support</a>
                             </ul>
                         </div>
-                    </li> 
+                    </li>  --}}
                 </ul>
             </div>
         </nav>

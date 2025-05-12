@@ -18,7 +18,7 @@ class OrderController extends Controller
 
         $orders = \Stripe\Checkout\Session::all();
         $orders = array_filter($orders->data, function($item) use ($user){
-            return $item->metadata->vendor_id == $user->stripe_account_id;
+            return $item->metadata->vendor_id == $user->stripe_account_id && $item->metadata->is_accepted = true || $item->metadata->is_accepted = 1;
         });
 
         return view('Orders.OrderList', compact('orders'));
