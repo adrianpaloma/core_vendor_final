@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/try', function(){
+Route::get('/try', function () {
     return view('InventoryManagement.LowStockAlerts');
 });
 
@@ -27,11 +27,11 @@ Route::get('/dashboard', function () {
     Stripe::setApiKey(env('STRIPE_SECRET'));
     $user = Auth::user();
     $products = \Stripe\Product::all();
-    $products = array_filter($products->data, function($product) use ($user){
+    $products = array_filter($products->data, function ($product) use ($user) {
         return $product->metadata->stripe_account == $user->stripe_account_id && $product->active == true;
     });
     $orders = \Stripe\Checkout\Session::all();
-    $orders = array_filter($orders->data, function($order) use ($user){
+    $orders = array_filter($orders->data, function ($order) use ($user) {
         return $order->metadata->vendor_id == $user->stripe_account_id;
     });
     $balance = \Stripe\Balance::retrieve(['stripe_account' => $user->stripe_account_id]);
@@ -69,75 +69,75 @@ Route::middleware('auth')->group(function () {
     //Inventory Report Controller
     Route::get('/InventoryReports', [InventoryReportController::class, 'index'])->name('InventoryReports');
 
-    Route::get('/StocksControl', [InventoryController::class , 'index'])->name('StocksControl');
+    Route::get('/StocksControl', [InventoryController::class, 'index'])->name('StocksControl');
     Route::put('/stock-update/{id}', [InventoryController::class, 'update_stock'])->name('stock_update');
 
     Route::get('/LowStockAlerts', [InventoryController::class, 'low_stock_alerts'])->name('LowStockAlerts');
     Route::get('/TransactionHistory', [TransactionController::class, 'index'])->name('TransactionHistory');
-    
+
+
+    Route::get("ManageReturns", function () {
+        return view("Orders.ManageReturns");
+    })->name('ManageReturns');
+    Route::get("AddNewProducts", function () {
+        return view("Products.AddNewProducts");
+    })->name('AddNewProducts');
+    Route::get("CategoryManagement", function () {
+        return view("Products.CategoryManagement");
+    })->name('CategoryManagement');
+    Route::get("ManageSuppliers", function () {
+        return view("InventoryManagement.ManageSuppliers");
+    })->name('ManageSuppliers');
+    Route::get("Refunds", function () {
+        return view("PaymentProcessing.Refunds");
+    })->name('Refunds');
+    Route::get("CustomerSupport", function () {
+        return view("CRM.CustomerSupport");
+    })->name('CustomerSupport');
+    Route::get("ProductReview", function () {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $user = Auth::user();
+        $products = \Stripe\Product::all(
+            ['type' => 'good']
+        );
+        $products = array_filter($products->data, function ($item) use ($user) {
+            return $item->metadata->stripe_account == $user->stripe_account_id && $item->active == true;
+        });
+
+        $reviews = collect();
+        $response  = Http::get('https://core2.fareastcafeshop.com/reviews');
+
+        if ($response->successful()) {
+            $data = $response->json('data');
+
+            foreach ($data as $reviewData) {
+                Review::updateOrCreate(
+                    ['id' => $reviewData['id']],
+                    [
+                        'product_id' => $reviewData['product_id'],
+                        'name' => $reviewData['name'] ?? 'Unknown',
+                        'rating' => $reviewData['rating'],
+                        'comment' => $reviewData['comment'],
+                    ]
+                );
+            }
+
+            $reviews = Review::all();
+        }
+
+        return view("Products.ProductReview", compact('reviews', 'products'));
+    })->name('ProductReview');
 });
 
-Route::get('/logout', function(){
+Route::get('/logout', function () {
     Auth::logout();
 
     return redirect('/');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 //View Controller
-
-Route::get("ManageReturns", function () {
-    return view("Orders.ManageReturns"); 
-})->name('ManageReturns');
-Route::get("AddNewProducts", function () {
-    return view("Products.AddNewProducts"); 
-})->name('AddNewProducts');
-Route::get("CategoryManagement", function () {
-    return view("Products.CategoryManagement"); 
-})->name('CategoryManagement');
-Route::get("ManageSuppliers", function () {
-    return view("InventoryManagement.ManageSuppliers"); 
-})->name('ManageSuppliers');
-Route::get("Refunds", function () {
-    return view("PaymentProcessing.Refunds"); 
-})->name('Refunds');
-Route::get("CustomerSupport", function () {
-    return view("CRM.CustomerSupport"); 
-})->name('CustomerSupport');
-Route::get("ProductReview", function () {
-    Stripe::setApiKey(env('STRIPE_SECRET'));
-    $user = Auth::user();
-    $products = \Stripe\Product::all(
-        ['type' => 'good']
-    );
-    $products = array_filter($products->data, function($item) use ($user){
-        return $item->metadata->stripe_account == $user->stripe_account_id && $item->active == true;
-    });
-    
-    $reviews = collect();
-    $response  = Http::get('https://core2.fareastcafeshop.com/reviews');
-
-    if($response->successful()) {
-        $data = $response->json('data');
-
-        foreach ($data as $reviewData) {
-            Review::updateOrCreate(
-                ['id' => $reviewData['id']],
-                [
-                    'product_id' => $reviewData['product_id'],
-                    'name' => $reviewData['name'] ?? 'Unknown',
-                    'rating' => $reviewData['rating'],
-                    'comment' => $reviewData['comment'],
-                ]
-            );
-        }
-
-        $reviews = Review::all();
-    }
-
-    return view("Products.ProductReview", compact('reviews', 'products')); 
-})->name('ProductReview');
 
 Route::get('/stripe_sync', function () {
     Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -146,4 +146,3 @@ Route::get('/stripe_sync', function () {
 
     return json_encode($a);
 });
-

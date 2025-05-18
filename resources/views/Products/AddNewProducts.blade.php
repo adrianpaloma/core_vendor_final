@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -15,6 +16,7 @@
             border-radius: 10px;
             margin-top: 20px;
         }
+
         .card-header {
             background-color: #744c24;
             color: white;
@@ -24,21 +26,27 @@
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
         }
+
         .form-control {
             font-size: 0.9rem;
         }
-        .btn-primary, .btn-secondary {
+
+        .btn-primary,
+        .btn-secondary {
             font-size: 0.9rem;
             padding: 0.5rem 1rem;
         }
+
         .form-group img {
             max-width: 100%;
             height: auto;
             margin-top: 10px;
         }
+
         .form-group .input-group {
             width: 100%;
         }
+
         .variant-group {
             border: 1px solid #ccc;
             padding: 10px;
@@ -46,146 +54,192 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+
         .variant-group .input-group {
             margin-bottom: 5px;
         }
+
         .remove-variant {
             margin-top: 5px;
         }
     </style>
 </head>
+
 <body>
 
-<div class="dashboard-main-wrapper">
-    @include('home.header')
-    @include('home.sidenav')
+    <div class="dashboard-main-wrapper">
+        @include('home.header')
+        @include('home.sidenav')
 
-    <div class="dashboard-wrapper">
-        <div class="dashboard-ecommerce">
-            <div class="container-fluid dashboard-content">
+        <div class="dashboard-wrapper">
+            <div class="dashboard-ecommerce">
+                <div class="container-fluid dashboard-content">
 
-                @if(session()->has('success') || session('error'))
-                    <div class="alert {{ session()->has('success') ? 'alert-success' : 'alert-warning' }}">
-                        {{ session('success') }} {{ session('warning') }}
-                    </div>
-                @endif
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0" style="color: white;">Add New Products</h5>
-                            </div>
+                    @if (session()->has('success') || session()->has('error'))
+                        <div class="alert {{ session()->has('success') ? 'alert-success' : 'alert-warning' }}">
+                            {{ session('success') ?? session('error') }}
+                        </div>
+                    @endif
 
-                            <div class="card-body">
-                                <form action="{{ route('product_store') }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('POST')
-                                    <div class="form-group">
-                                        <label for="productName">Product Name</label>
-                                        <input type="text" class="form-control" id="productName" name="name" placeholder="Enter product name" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="productDescription">Description</label>
-                                        <textarea class="form-control" id="productDescription" name="description" rows="4" placeholder="Enter product description"></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="category">Category</label>
-                                        <select class="form-control" id="category" name="category">
-                                            <option value="Technology">Technology</option>
-                                            <option value="Fashion">Fashion</option>
-                                            <option value="Beauty & Personal Care">Beauty & Personal Care</option>
-                                            <option value="Home & Furniture">Home & Furniture</option>
-                                            <option value="Others">Others</option>
-                                        </select>
-                                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0" style="color: white;">Add New Products</h5>
+                                </div>
 
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">$</span>
-                                            </div>
-                                            <input type="text" class="form-control" name="price" placeholder="Price" required>
+                                <div class="card-body">
+                                    <form action="{{ route('product_store') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        @method('POST')
+
+                                        <div class="form-group">
+                                            <label for="productName">Product Name</label>
+                                            <input type="text" class="form-control" id="productName" name="name"
+                                                placeholder="Enter product name" required>
+                                            @error('name')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">Stock</span>
-                                            </div>
-                                            <input type="number" class="form-control" name="stock" placeholder="Stock Quantity" required>
+                                        <div class="form-group">
+                                            <label for="productDescription">Description</label>
+                                            <textarea class="form-control" id="productDescription" name="description" rows="4"
+                                                placeholder="Enter product description"></textarea>
+                                            @error('description')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
-                                    </div>
 
-                                    <div id="variants-container">
-                                        <label>Product Variations (Color & Size)</label>
-                                        <div class="variant-group">
+                                        <div class="form-group">
+                                            <label for="category">Category</label>
+                                            <select class="form-control" id="category" name="category">
+                                                <option value="Technology">Technology</option>
+                                                <option value="Fashion">Fashion</option>
+                                                <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+                                                <option value="Home & Furniture">Home & Furniture</option>
+                                                <option value="Others">Others</option>
+                                            </select>
+                                            @error('category')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">Color</span>
+                                                    <span class="input-group-text">$</span>
                                                 </div>
-                                                <input type="text" class="form-control" name="variants[0][color]" placeholder="Enter color">
+                                                <input type="text" class="form-control" name="price"
+                                                    placeholder="Price" required>
                                             </div>
+                                            @error('price')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">Size</span>
+                                                    <span class="input-group-text">Stock</span>
                                                 </div>
-                                                <input type="text" class="form-control" name="variants[0][size]" placeholder="Enter size">
+                                                <input type="number" class="form-control" name="stock"
+                                                    placeholder="Stock Quantity" required>
+                                            </div>
+                                            @error('stock')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
+                                        <div id="variants-container">
+                                            <label>Product Variations (Color & Size)</label>
+                                            <div class="variant-group">
+                                                <div class="input-group mb-2">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Color</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="variants[0][color]"
+                                                        placeholder="Enter color">
+                                                </div>
+                                                @error('variants.0.color')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+
+                                                <div class="input-group mb-2">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Size</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="variants[0][size]"
+                                                        placeholder="Enter size">
+                                                </div>
+                                                @error('variants.0.size')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <button type="button" id="add-variant" class="btn btn-info btn-sm mb-3">Add Another Variation</button>
+                                        <button type="button" id="add-variant" class="btn btn-info btn-sm mb-3">Add
+                                            Another Variation</button>
 
-                                    <div class="form-group">
-                                        <label for="productImage">Upload Image</label>
-                                        <input type="file" class="form-control-file" id="productImage" name="productImage" accept="image/*" onchange="previewImage(event)">
-                                        <img id="imagePreview" class="mt-3" src="#" alt="Image Preview" style="display: none;">
-                                    </div>
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-block">Add Product</button>
-                                    </div>
-                                    <div class="form-group">
-                                        <a href="/products" class="btn btn-secondary btn-block">Cancel</a>
-                                    </div>
-                                </form>
+                                        <div class="form-group">
+                                            <label for="productImage">Upload Image (jpeg,png)</label>
+                                            <input type="file" class="form-control-file" id="productImage"
+                                                name="productImage" accept="image/*" onchange="previewImage(event)">
+                                            @error('productImage')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                            <img id="imagePreview" class="mt-3" src="#" alt="Image Preview"
+                                                style="display: none;">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-block">Add
+                                                Product</button>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <a href="/products" class="btn btn-secondary btn-block">Cancel</a>
+                                        </div>
+                                    </form>
+
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
+
+        @include('home.footer')
     </div>
 
-    @include('home.footer')
-</div>
+    <script src="home/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script src="home/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="home/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+    <script src="home/assets/libs/js/main-js.js"></script>
 
-<script src="home/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-<script src="home/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-<script src="home/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-<script src="home/assets/libs/js/main-js.js"></script>
+    <script>
+        function previewImage(event) {
+            const output = document.getElementById('imagePreview');
+            const file = event.target.files[0];
+            const reader = new FileReader();
 
-<script>
-    function previewImage(event) {
-        const output = document.getElementById('imagePreview');
-        const file = event.target.files[0];
-        const reader = new FileReader();
+            reader.onload = function() {
+                output.style.display = 'block';
+                output.src = reader.result;
+            };
 
-        reader.onload = function() {
-            output.style.display = 'block';
-            output.src = reader.result;
-        };
-
-        if (file) {
-            reader.readAsDataURL(file);
+            if (file) {
+                reader.readAsDataURL(file);
+            }
         }
-    }
 
-    $(document).ready(function() {
-        let variantCount = 1;
+        $(document).ready(function() {
+            let variantCount = 1;
 
-        $("#add-variant").click(function() {
-            const newVariant = `
+            $("#add-variant").click(function() {
+                const newVariant = `
                 <div class="variant-group" id="variant-${variantCount}">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -202,16 +256,17 @@
                     <button type="button" class="btn btn-danger btn-sm remove-variant" data-variant-id="${variantCount}">Remove</button>
                 </div>
             `;
-            $("#variants-container").append(newVariant);
-            variantCount++;
-        });
+                $("#variants-container").append(newVariant);
+                variantCount++;
+            });
 
-        $("#variants-container").on('click', '.remove-variant', function() {
-            const variantId = $(this).data('variant-id');
-            $(`#variant-${variantId}`).remove();
+            $("#variants-container").on('click', '.remove-variant', function() {
+                const variantId = $(this).data('variant-id');
+                $(`#variant-${variantId}`).remove();
+            });
         });
-    });
-</script>
+    </script>
 
 </body>
+
 </html>

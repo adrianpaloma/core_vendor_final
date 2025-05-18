@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use PDO;
 use Stripe\Stripe;
 use Illuminate\Http\Request;
@@ -15,12 +16,13 @@ class ProductController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
     }
 
-    public function index(){
+    public function index()
+    {
         $user = Auth::user();
         $products = \Stripe\Product::all(
             ['type' => 'good']
         );
-        $products = array_filter($products->data, function($item) use ($user){
+        $products = array_filter($products->data, function ($item) use ($user) {
             return $item->metadata->stripe_account == $user->stripe_account_id && $item->active == true;
         });
 
@@ -39,7 +41,7 @@ class ProductController extends Controller
             'category' => 'required',
             'stock' => 'required|integer|min:0',
             'description' => 'required',
-            'productImage' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'productImage' => 'required|image|mimes:jpeg,png|max:2048',
             'variants' => 'array',
             'variants.*.color' => 'required_with:variants.*.size|nullable|string|max:255',
             'variants.*.size' => 'required_with:variants.*.color|nullable|string|max:255',
@@ -56,11 +58,10 @@ class ProductController extends Controller
                     'status' => 'Pending',
                     'category' => $request->category,
                     'stripe_account' => $user->stripe_account_id,
-                    'variants' => json_encode($request->variants), // Add variants to metadata
+                    'variants' => json_encode($request->variants),
                 ],
             ]);
 
-            // Upload and attach image if exists
             if ($request->hasFile('productImage')) {
                 $file = $request->file('productImage');
 
@@ -87,7 +88,6 @@ class ProductController extends Controller
                 ]);
             }
 
-            // Create a Stripe price for the product
             \Stripe\Price::create([
                 'currency' => 'usd',
                 'unit_amount' => $request->price * 100,
@@ -102,7 +102,6 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
-
 
     public function update(Request $request, $product_id)
     {
