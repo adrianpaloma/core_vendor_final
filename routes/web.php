@@ -14,6 +14,8 @@ use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\InventoryReportController;
+use App\Models\Conversation;
+use App\Models\Message;
 
 Route::get('/', function () {
     return view('welcome');
@@ -92,8 +94,13 @@ Route::middleware('auth')->group(function () {
         return view("PaymentProcessing.Refunds");
     })->name('Refunds');
     Route::get("CustomerSupport", function () {
-        return view("CRM.CustomerSupport");
+        $user = Auth::user();
+        $convo = Conversation::where('recipient_id', $user->stripe_account_id)->get();
+        $messages = Message::all();
+
+        return view("CRM.CustomerSupport", compact('convo', 'messages'));
     })->name('CustomerSupport');
+
     Route::get("ProductReview", function () {
         Stripe::setApiKey(env('STRIPE_SECRET'));
         $user = Auth::user();
