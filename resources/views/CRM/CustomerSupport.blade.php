@@ -424,9 +424,11 @@
 
                                                     <div class="reply-form-container mt-4">
                                                         <h6 class="section-title">Your Reply:</h6>
-                                                        <form action=""
+                                                        <form action="{{ route('msg_reply') }}"
                                                             method="POST">
                                                             @csrf
+                                                            
+                                                            <input type="hidden" name="convo_id" value="{{ $item->id }}">
                                                             <div class="form-group mb-2">
                                                                 <textarea class="form-control" name="reply_content" rows="4" placeholder="Enter your detailed reply here..."
                                                                     required></textarea>

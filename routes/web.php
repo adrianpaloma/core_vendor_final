@@ -2,11 +2,14 @@
 
 use Stripe\Stripe;
 use App\Models\Review;
+use App\Models\Message;
+use App\Models\Conversation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PayoutController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InventoryController;
@@ -14,8 +17,6 @@ use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\InventoryReportController;
-use App\Models\Conversation;
-use App\Models\Message;
 
 Route::get('/', function () {
     return view('welcome');
@@ -134,7 +135,11 @@ Route::middleware('auth')->group(function () {
 
         return view("Products.ProductReview", compact('reviews', 'products'));
     })->name('ProductReview');
+
+    Route::post('/reply', [MessageController::class, 'vendor_send_msg'])->name('msg_reply');
 });
+
+Route::post('/receive/messages', [MessageController::class, 'vendor_receive_msg'])->name('msg_receive');
 
 Route::get('/logout', function () {
     Auth::logout();
